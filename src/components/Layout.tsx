@@ -19,7 +19,7 @@ function Layout({
         <meta name='viewport' content='width=device-width, initial-scale=1' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <main className='bg-red-200'>{children}</main>
+      <main className='min-h-screen'>{children}</main>
     </>
   );
 }
