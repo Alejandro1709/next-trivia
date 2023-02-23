@@ -50,8 +50,10 @@ export default function Home() {
   useEffect(() => {
     getTrivias()
       .then(({ results }) => {
-        setTrivias(handleDecodeTrivia(results));
-        setCurrentTrivia(results[0]);
+        const formatted = formatOptions(results);
+        const decoded = handleDecodeTrivia(formatted);
+        setTrivias(decoded);
+        setCurrentTrivia(decoded[0]);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -70,7 +72,6 @@ export default function Home() {
     setNumber((prev) => prev + 1);
   };
 
-  console.log(currentTrivia?.options);
   return (
     <Layout>
       <section className='flex flex-col justify-center md:max-w-screen-md md:mx-auto'>
