@@ -1,50 +1,15 @@
 import { useEffect, useState } from 'react';
 import { getTrivias } from '@/services/trivia';
-import he from 'he';
 import Layout from '@/components/Layout';
 import Options from '@/components/Options';
+import { formatOptions, handleDecodeTrivia } from '@/utils/trivias';
 import type ITrivia from '@/types/trivia';
-
-const handleDecodeTrivia = (trivias: ITrivia[]) => {
-  return trivias.map((trivia) => ({
-    ...trivia,
-    question: he.decode(trivia.question),
-  }));
-};
-
-const shuffle = (array: any[]) => {
-  let m = array.length;
-  let t;
-  let i;
-
-  // While there remain elements to shuffle…
-  while (m) {
-    // Pick a remaining element…
-    i = Math.floor(Math.random() * m--);
-
-    // And swap it with the current element.
-    t = array[m];
-    array[m] = array[i];
-    array[i] = t;
-  }
-
-  return array;
-};
-
-const formatOptions = (array: ITrivia[]) => {
-  let summed: string[] = [];
-
-  array.forEach((opt) => {
-    summed = shuffle([...opt.incorrect_answers, opt.correct_answer]);
-    opt.options = summed;
-  });
-
-  return array;
-};
 
 export default function Home() {
   const [trivias, setTrivias] = useState<ITrivia[]>([]);
   const [currentTrivia, setCurrentTrivia] = useState<ITrivia>();
+  const [score, setScore] = useState<number>(0);
+  const [highScore, setHighScore] = useState<number>(0);
   const [number, setNumber] = useState<number>(0);
 
   useEffect(() => {
@@ -72,14 +37,34 @@ export default function Home() {
     setNumber((prev) => prev + 1);
   };
 
+  const handleOptionClick = (guess: string) => {
+    if (guess === currentTrivia?.correct_answer) {
+      setScore((prev) => prev + 10);
+
+      if (score > highScore) {
+        // localStorage.setItem('highScore', score.toString());
+        setHighScore(score);
+      }
+    } else {
+      setScore(0);
+    }
+  };
+
   return (
     <Layout>
       <section className='flex flex-col justify-center md:max-w-screen-md md:mx-auto'>
+        <div className='flex flex-row gap-4'>
+          <span>High Score: {highScore}</span>
+          <span>Score: {score}</span>
+        </div>
         <div className='flex flex-col gap-4 p-4'>
           <p className='p-2 md:text-lg text-sm bg-slate-100 text-center rounded-md shadow-md'>
             {currentTrivia?.question}
           </p>
-          <Options options={currentTrivia?.options || []} />
+          <Options
+            options={currentTrivia?.options || []}
+            onGuess={handleOptionClick}
+          />
           <div className='flex flex-row justify-between items-center'>
             <button
               className='p-2 bg-slate-200 rounded-md hover:bg-slate-300'
