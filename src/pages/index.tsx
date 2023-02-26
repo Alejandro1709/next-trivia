@@ -39,14 +39,9 @@ export default function Home() {
 
   const handleOptionClick = (guess: string) => {
     if (guess === currentTrivia?.correct_answer) {
-      setScore((prev) => prev + 10);
-
-      if (score > highScore) {
-        // localStorage.setItem('highScore', score.toString());
-        setHighScore(score);
-      }
+      console.log('correct');
     } else {
-      setScore(0);
+      console.log('wrong');
     }
   };
 
