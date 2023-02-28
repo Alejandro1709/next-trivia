@@ -39,9 +39,12 @@ export default function Home() {
 
   const handleOptionClick = (guess: string) => {
     if (guess === currentTrivia?.correct_answer) {
-      console.log('correct');
+      setScore((prev) => prev + 5);
+      setHighScore((prev) => (prev < score ? score : prev));
+      setNumber((prev) => prev + 1);
     } else {
-      console.log('wrong');
+      if (score === 0) return;
+      setScore((prev) => prev - 5);
     }
   };
 
